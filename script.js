@@ -1,13 +1,18 @@
+const auctionItems = [
+  { id: 'item1', startingBid: 3000 },
+  { id: 'item2', startingBid: 4000 },
+  { id: 'item3', startingBid: 5000 }
+];
+
 const auctions = {}; // track bids per item
 
-document.querySelectorAll('.auction-item').forEach(item => {
-  const id = item.dataset.id;
-  const startingBid = parseFloat(item.dataset.startingBid);
-  const form = item.querySelector('.bid-form');
-  const nameInput = item.querySelector('.bid-name');
-  const amountInput = item.querySelector('.bid-amount');
-  const bidList = item.querySelector('.bid-history');
-  const currentBidEl = item.querySelector('.current-bid');
+auctionItems.forEach(item => {
+  const { id, startingBid } = item;
+  const auctionElement = document.querySelector(`.auction-item[data-id='${id}']`);
+  const form = auctionElement.querySelector('.bid-form');
+  const amountInput = auctionElement.querySelector('.bid-amount');
+  const bidList = auctionElement.querySelector('.bid-history');
+  const currentBidEl = auctionElement.querySelector('.current-bid');
 
   // Initialize bid tracking
   if (!auctions[id]) {
@@ -18,23 +23,22 @@ document.querySelectorAll('.auction-item').forEach(item => {
   const updateBidDisplay = () => {
     const bids = auctions[id];
     if (bids.length > 0) {
-      const top = Math.max(...bids.map(b => b.amount));
-      currentBidEl.textContent = `$${top}`;
+      const topBid = Math.max(...bids.map(b => b.amount));
+      currentBidEl.textContent = `$${topBid}`;
     } else {
       currentBidEl.textContent = `$${startingBid}`;
     }
 
     bidList.innerHTML = "";
-    bids.slice().reverse().forEach((bid, index) => {
+    bids.slice().reverse().forEach(bid => {
       const li = document.createElement("li");
-      li.textContent = `$${bid.amount} — ${new Date(bid.time).toLocaleTimeString()}`;
+      li.textContent = `$${bid.amount}`; // Display only the amount
       bidList.appendChild(li);
     });
   };
 
   form.addEventListener("submit", e => {
     e.preventDefault();
-    const name = nameInput.value.trim();
     const amount = parseFloat(amountInput.value);
 
     const topBid = auctions[id].length > 0
@@ -47,12 +51,12 @@ document.querySelectorAll('.auction-item').forEach(item => {
     }
 
     auctions[id].push({
-      name,
       amount,
-      time: new Date().toISOString()
+      time: new Date().toISOString(),
+      // Store the name internally for tracking
+      name: form.querySelector('.bid-name').value.trim()
     });
 
-    nameInput.value = "";
     amountInput.value = "";
     updateBidDisplay();
   });
