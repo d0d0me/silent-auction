@@ -22,8 +22,10 @@ auctionItems.forEach(item => {
 
   const updateBidDisplay = () => {
     const bids = auctions[id];
+    console.log(`Updating display for item ${id}. Current bids:`, bids); // Log current bids
     if (bids.length > 0) {
       const topBid = Math.max(...bids.map(b => b.amount));
+      console.log(`Top bid for item ${id}: $${topBid}`); // Log top bid
       currentBidEl.textContent = `$${topBid}`;
     } else {
       currentBidEl.textContent = `$${startingBid}`;
