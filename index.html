@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Silent Auction</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Silent Auction</h1>
+    <div id="item">
+      <h2>Mutual Core Speaker</h2>
+      <img src="your-speaker-image.jpg" alt="Speaker" />
+      <p>Current Highest Bid: <strong id="currentBid">$0</strong></p>
+    </div>
+
+    <form id="bidForm">
+      <input type="text" id="name" placeholder="Your name (kept private)" required />
+      <input type="number" id="amount" placeholder="Your bid in $" required />
+      <button type="submit">Place Bid</button>
+    </form>
+
+    <ul id="bidHistory">
+      <!-- Bids will appear here -->
+    </ul>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
