@@ -58,33 +58,33 @@
   <script>
     const form = document.getElementById('bid-form');
     const message = document.getElementById('form-message');
-
+  
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const data = Object.fromEntries(new FormData(form));
-
+  
+      const formData = new FormData(form);
+  
       try {
         const res = await fetch('https://script.google.com/macros/s/AKfycbzJ-RHtxi7Vzhe4iT73l0wWLpTek7ftMxHBgDcUt9qaax1t9qsYyHNftsSdDaqi9_0vPw/exec', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
+          body: formData
         });
-
-        const result = await res.json();
-        message.textContent = result.success
-          ? '✅ Thank you! Your bid has been submitted.'
-          : '❌ Something went wrong.';
+  
+        const resultText = await res.text();
+        console.log("Result:", resultText);
+  
+        if (resultText.includes("success")) {
+          message.textContent = "Thank you! Your bid has been submitted.";
+        } else {
+          message.textContent = "Something went wrong submitting your bid.";
+        }
       } catch (error) {
-        console.error('Fetch error:', error);
-        message.textContent = '⚠️ Error submitting your bid.';
+        console.error("Fetch error:", error);
+        message.textContent = "An error occurred while submitting your bid.";
       }
     });
-
-    // Optional placeholder until we wire up real-time highest bid
-    document.getElementById('highest-bid').textContent = 'Highest bid loading disabled for now.';
   </script>
+  
 
 </body>
 </html>
