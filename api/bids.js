@@ -1,6 +1,17 @@
-let bids = []; // In-memory storage — will reset on each deploy or cold start
+let bids = []; // In-memory storage — resets on deploy or cold start
 
 export default async function handler(req, res) {
+  // Enable CORS for Shopify
+  res.setHeader("Access-Control-Allow-Origin", "https://limpatience.com");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  // Respond to CORS preflight request
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  // Handle new bid submission
   if (req.method === 'POST') {
     try {
       const { name, email, bidAmount, product } = req.body;
@@ -26,6 +37,7 @@ export default async function handler(req, res) {
     }
   }
 
+  // Handle bid fetch for a given product
   if (req.method === 'GET') {
     const product = req.query.product;
     if (!product) return res.status(400).json({ error: 'Missing product' });
