@@ -41,7 +41,7 @@
       e.preventDefault();
       const data = Object.fromEntries(new FormData(form));
 
-      const res = await fetch('/api/bids', {
+      const res = await fetch('https://script.google.com/a/macros/limpatience.com/s/AKfycbx64qcTo0UvvMJezCk7Md1XfP0FymsvBpoB5Zjwg_dZR9r9FFobswVQYHbf0qKv-Ls/exec', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
