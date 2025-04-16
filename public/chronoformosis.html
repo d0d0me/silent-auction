@@ -36,35 +36,27 @@
   <script>
     const form = document.getElementById('bid-form');
     const message = document.getElementById('form-message');
-
+  
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+  
       const data = Object.fromEntries(new FormData(form));
-
+  
       const res = await fetch('https://script.google.com/a/macros/limpatience.com/s/AKfycbx64qcTo0UvvMJezCk7Md1XfP0FymsvBpoB5Zjwg_dZR9r9FFobswVQYHbf0qKv-Ls/exec', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(data)
       });
-
+  
       const result = await res.json();
       message.textContent = result.success
         ? 'Thank you! Your bid has been submitted.'
         : 'Something went wrong.';
-
-      loadHighestBid(); // refresh bid display
     });
-
-    async function loadHighestBid() {
-      const res = await fetch('/api/bids?product=Chronoformosis');
-      const { highestBid } = await res.json();
-      document.getElementById('highest-bid').textContent = highestBid
-        ? `Current Highest Bid: $${highestBid.bidAmount}`
-        : 'No bids yet — be the first!';
-    }
-
-    loadHighestBid();
   </script>
+  
 
 </body>
 </html>
