@@ -42,6 +42,11 @@ module.exports = async function handler(req, res) {
       console.error('❌ Unexpected POST error:', err);
       return res.status(500).json({ error: err.message || 'Server error' });
     }
+    if (error) {
+      console.error('❌ Supabase insert error:', error);
+      return res.status(500).json({ success: false, error: error.message || 'Failed to save bid' });
+    }
+    
   }
 
   // ✅ GET: Return highest bid for a given product
