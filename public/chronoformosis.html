@@ -1,62 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Chronoformosis Auction</title>
-  <style>
-    body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; }
-    label { display: block; margin-top: 1em; }
-    input { width: 100%; padding: 0.5em; margin-top: 0.2em; }
-    button { margin-top: 1em; padding: 0.5em 1em; }
-    #highest-bid { margin-bottom: 1em; font-weight: bold; }
-  </style>
-</head>
-<body>
+<script>
+  const form = document.getElementById('bid-form');
+  const message = document.getElementById('form-message');
 
-  <h2>Silent Auction — Chronoformosis</h2>
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form));
 
-  <p id="highest-bid">Loading highest bid...</p>
-
-  <form id="bid-form">
-    <label>Your Name
-      <input name="name" required>
-    </label>
-    <label>Your Email
-      <input name="email" type="email" required>
-    </label>
-    <label>Your Bid ($)
-      <input name="bidAmount" type="number" required>
-    </label>
-    <input type="hidden" name="product" value="Chronoformosis">
-    <button type="submit">Place Bid</button>
-  </form>
-
-  <p id="form-message"></p>
-
-  <script>
-    const form = document.getElementById('bid-form');
-    const message = document.getElementById('form-message');
-  
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-  
-      const data = Object.fromEntries(new FormData(form));
-  
-      const res = await fetch('https://script.google.com/a/macros/limpatience.com/s/AKfycbx64qcTo0UvvMJezCk7Md1XfP0FymsvBpoB5Zjwg_dZR9r9FFobswVQYHbf0qKv-Ls/exec', {
+    try {
+      const res = await fetch('https://script.google.com/macros/s/AKfycbzJ-RHtxi7Vzhe
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
       });
-  
+
       const result = await res.json();
+      console.log("Response:", result);
       message.textContent = result.success
         ? 'Thank you! Your bid has been submitted.'
         : 'Something went wrong.';
-    });
-  </script>
-  
-
-</body>
-</html>
+    } catch (error) {
+      console.error("Fetch error:", error);
+      message.textContent = "An error occurred while submitting your bid.";
+    }
+  });
+</script>
