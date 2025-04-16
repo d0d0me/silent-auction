@@ -1,23 +1,19 @@
-import { createClient } from '@supabase/supabase-js';
+const { createClient } = require('@supabase/supabase-js');
 
-// ✅ Supabase credentials
 const supabaseUrl = 'https://pwbpbfecmsmjvhdntdix.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3YnBiZmVjbXNtanZoZG50ZGl4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ4MTYxMzQsImV4cCI6MjA2MDM5MjEzNH0.m8EYVje9suxMqdId2QjMBdcVtMvybBYQDKA5GavVdS4';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-export default async function handler(req, res) {
-  // ✅ Allow Shopify requests
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', 'https://limpatience.com');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // ✅ Respond to preflight requests
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  // ✅ Handle POST: Submit new bid
   if (req.method === 'POST') {
     const { name, email, bidAmount, product } = req.body;
 
@@ -40,7 +36,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ success: true });
   }
 
-  // ✅ Handle GET: Fetch highest bid for a product
   if (req.method === 'GET') {
     const product = req.query.product;
     if (!product) return res.status(400).json({ error: 'Missing product' });
@@ -61,4 +56,4 @@ export default async function handler(req, res) {
   }
 
   return res.status(405).json({ error: 'Method not allowed' });
-}
+};
