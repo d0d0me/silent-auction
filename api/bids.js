@@ -17,37 +17,38 @@ module.exports = async function handler(req, res) {
   // ✅ POST: Submit a new bid
   if (req.method === 'POST') {
     const { name, email, bidAmount, product } = req.body;
-
+  
     if (!name || !email || !bidAmount || !product) {
+      console.log("❌ Missing required fields", req.body);
       return res.status(400).json({ error: 'Missing fields' });
     }
-
+  
     try {
-      const { error } = await supabase.from('bids').insert([
+      const parsedAmount = parseFloat(bidAmount);
+      console.log("📤 Attempting to insert bid:", { name, email, parsedAmount, product });
+  
+      const { data, error } = await supabase.from('bids').insert([
         {
           name,
           email,
-          bidAmount: parseFloat(bidAmount),
+          bidAmount: parsedAmount,
           product,
         },
       ]);
-
+  
       if (error) {
         console.error('❌ Supabase insert error:', error);
-        return res.status(500).json({ error: error.message || 'Failed to save bid' });
+        return res.status(500).json({ success: false, error: error.message || 'Insert failed' });
       }
-
+  
+      console.log("✅ Bid inserted successfully:", data);
       return res.status(200).json({ success: true });
     } catch (err) {
       console.error('❌ Unexpected POST error:', err);
       return res.status(500).json({ error: err.message || 'Server error' });
     }
-    if (error) {
-      console.error('❌ Supabase insert error:', error);
-      return res.status(500).json({ success: false, error: error.message || 'Failed to save bid' });
-    }
-    
   }
+  
 
   // ✅ GET: Return highest bid for a given product
   if (req.method === 'GET') {
