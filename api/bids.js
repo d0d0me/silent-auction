@@ -7,13 +7,14 @@ const supabase = createClient(
 );
 
 module.exports = async function handler(req, res) {
-  // ✅ Enable CORS
+  // ✅ Enable CORS for Shopify
   res.setHeader('Access-Control-Allow-Origin', 'https://limpatience.com');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
 
+  // ✅ POST: Submit a new bid
   if (req.method === 'POST') {
     const { name, email, bidAmount, product } = req.body;
 
@@ -33,16 +34,17 @@ module.exports = async function handler(req, res) {
 
       if (error) {
         console.error('❌ Supabase insert error:', error);
-        return res.status(500).json({ error: 'Failed to save bid' });
+        return res.status(500).json({ error: error.message || 'Failed to save bid' });
       }
 
       return res.status(200).json({ success: true });
     } catch (err) {
-      console.error('❌ Unexpected error:', err);
-      return res.status(500).json({ error: 'Server error' });
+      console.error('❌ Unexpected POST error:', err);
+      return res.status(500).json({ error: err.message || 'Server error' });
     }
   }
 
+  // ✅ GET: Return highest bid for a given product
   if (req.method === 'GET') {
     const product = req.query.product;
     if (!product) return res.status(400).json({ error: 'Missing product' });
@@ -57,13 +59,13 @@ module.exports = async function handler(req, res) {
 
       if (error) {
         console.error('❌ Supabase fetch error:', error);
-        return res.status(500).json({ error: 'Failed to fetch bids' });
+        return res.status(500).json({ error: error.message || 'Failed to fetch bids' });
       }
 
       return res.status(200).json({ highestBid: data[0] || null });
     } catch (err) {
-      console.error('❌ Unexpected fetch error:', err);
-      return res.status(500).json({ error: 'Server error' });
+      console.error('❌ Unexpected GET error:', err);
+      return res.status(500).json({ error: err.message || 'Server error' });
     }
   }
 
