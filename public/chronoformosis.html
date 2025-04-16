@@ -1,41 +1,102 @@
-<script>
-  const form = document.getElementById('bid-form');
-  const message = document.getElementById('form-message');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chronoformosis Silent Auction</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    h2 {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.5em;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.5em 1em;
+    }
+    #highest-bid {
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(form));
+  <h2>Silent Auction — Chronoformosis</h2>
 
-    try {
-      const res = await fetch('/api/bids', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+  <p id="highest-bid">Loading highest bid...</p>
 
-      const result = await res.json();
+  <form id="bid-form">
+    <label>
+      Your Name
+      <input name="name" required>
+    </label>
+    <label>
+      Your Email
+      <input name="email" type="email" required>
+    </label>
+    <label>
+      Your Bid ($)
+      <input name="bidAmount" type="number" required>
+    </label>
+    <input type="hidden" name="product" value="Chronoformosis">
+    <button type="submit">Place Bid</button>
+  </form>
 
-      message.textContent = result.success
-        ? 'Thank you! Your bid has been submitted.'
-        : 'Something went wrong.';
-    } catch (error) {
-      console.error("Fetch error:", error);
-      message.textContent = "An error occurred while submitting your bid.";
+  <p id="form-message" style="margin-top: 1rem;"></p>
+
+  <script>
+    const form = document.getElementById('bid-form');
+    const message = document.getElementById('form-message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form));
+
+      try {
+        const res = await fetch('/api/bids', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+        message.textContent = result.success
+          ? 'Thank you! Your bid has been submitted.'
+          : 'Something went wrong.';
+      } catch (error) {
+        console.error("Fetch error:", error);
+        message.textContent = "An error occurred while submitting your bid.";
+      }
+
+      loadHighestBid();
+    });
+
+    async function loadHighestBid() {
+      const res = await fetch('/api/bids?product=Chronoformosis');
+      const { highestBid } = await res.json();
+
+      document.getElementById('highest-bid').textContent = highestBid
+        ? `Current Highest Bid: $${highestBid.bidAmount}`
+        : 'No bids yet — be the first!';
     }
 
     loadHighestBid();
-  });
+  </script>
 
-  async function loadHighestBid() {
-    const res = await fetch('/api/bids?product=Chronoformosis');
-    const { highestBid } = await res.json();
-
-    document.getElementById('highest-bid').textContent = highestBid
-      ? `Current Highest Bid: $${highestBid.bidAmount}`
-      : 'No bids yet — be the first!';
-  }
-
-  loadHighestBid();
-</script>
+</body>
+</html>
